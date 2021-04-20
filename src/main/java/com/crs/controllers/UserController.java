@@ -24,7 +24,7 @@ public class UserController {
         return new ResponseEntity<>(userService.saveDto(userDto), HttpStatus.OK);
     }
 
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<List> getAllUsers() {
         return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
@@ -32,7 +32,7 @@ public class UserController {
 
 
 
-//    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/user/{user-name}")
     public ResponseEntity<User> getUser(@PathVariable("user-name") String user) {
         return new ResponseEntity<>(userService.findUser(user), HttpStatus.OK);

@@ -4,10 +4,12 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.crs.dto.MyUserPrincipal;
 import com.crs.entities.User;
+import com.crs.services.UserDetailsServiceImpl;
 import com.crs.services.UserService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -23,8 +25,11 @@ import static com.crs.config.SecurityConstants.TOKEN_PREFIX;
 
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
-    public JWTAuthorizationFilter(AuthenticationManager authManager) {
+    private UserDetailsServiceImpl userDetailsService;
+
+    public JWTAuthorizationFilter(AuthenticationManager authManager,UserDetailsServiceImpl userDetailsService) {
         super(authManager);
+        this.userDetailsService=userDetailsService;
     }
 
     @Override
@@ -55,9 +60,11 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
                     .verify(token.replace(TOKEN_PREFIX, ""))
                     .getSubject();
 
+            UserDetails userDetails = userDetailsService.loadUserByUsername(user);
+
             if (user != null) {
                 // new arraylist means authorities
-                return new UsernamePasswordAuthenticationToken(user, null,new ArrayList<>());
+                return new UsernamePasswordAuthenticationToken(user, null,userDetails.getAuthorities());
             }
 
             return null;
