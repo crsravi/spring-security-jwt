@@ -1,4 +1,4 @@
-package com.crs.entities;
+package com.crs.models;
 
 
 import javax.persistence.*;

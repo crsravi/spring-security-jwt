@@ -1,7 +1,7 @@
 package com.crs.controllers;
 
 import com.crs.dto.UserDto;
-import com.crs.entities.User;
+import com.crs.models.User;
 import com.crs.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.websocket.server.PathParam;
 import java.util.List;
 
 @RestController

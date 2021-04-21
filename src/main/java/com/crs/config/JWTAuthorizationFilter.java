@@ -2,14 +2,11 @@ package com.crs.config;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.crs.dto.MyUserPrincipal;
-import com.crs.entities.User;
-import com.crs.services.UserDetailsServiceImpl;
-import com.crs.services.UserService;
+import com.auth0.jwt.interfaces.Claim;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -17,19 +14,17 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import static com.crs.config.SecurityConstants.HEADER_STRING;
-import static com.crs.config.SecurityConstants.SECRET;
-import static com.crs.config.SecurityConstants.TOKEN_PREFIX;
+import static com.crs.config.SecurityConstants.*;
 
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
-    private UserDetailsServiceImpl userDetailsService;
 
-    public JWTAuthorizationFilter(AuthenticationManager authManager,UserDetailsServiceImpl userDetailsService) {
+    public JWTAuthorizationFilter(AuthenticationManager authManager) {
         super(authManager);
-        this.userDetailsService=userDetailsService;
     }
 
     @Override
@@ -55,16 +50,11 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
         if (token != null) {
             // parse the token.
-            String user = JWT.require(Algorithm.HMAC512(SECRET.getBytes()))
-                    .build()
-                    .verify(token.replace(TOKEN_PREFIX, ""))
-                    .getSubject();
-
-            UserDetails userDetails = userDetailsService.loadUserByUsername(user);
+            String user = getSubject(token);
 
             if (user != null) {
                 // new arraylist means authorities
-                return new UsernamePasswordAuthenticationToken(user, null,userDetails.getAuthorities());
+                return new UsernamePasswordAuthenticationToken(user, null,getAuthorities(token));
             }
 
             return null;
@@ -73,4 +63,21 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         return null;
     }
 
+    private String getSubject(String token) {
+        return JWT.require(Algorithm.HMAC512(SECRET.getBytes()))
+                .build()
+                .verify(token.replace(TOKEN_PREFIX, ""))
+                .getSubject();
+    }
+
+    private List getAuthorities(String token){
+
+        Claim claimList = JWT.require(Algorithm.HMAC512(SECRET.getBytes()))
+                .build()
+                .verify(token.replace(TOKEN_PREFIX, ""))
+                .getClaim(AUTH);
+        return  Arrays.asList(claimList.asArray(String.class)).stream()
+                .map(s->new SimpleGrantedAuthority((String)s))
+                .collect(Collectors.toList());
+    }
 }

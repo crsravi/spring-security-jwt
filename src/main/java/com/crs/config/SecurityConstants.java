@@ -7,4 +7,5 @@ public class SecurityConstants {
     public static final String HEADER_STRING = "Authorization";
     public static final String SIGN_UP_URL = "/api/services/controller/users";
     public static final String H2_CONSOLE = "/h2-console/**";
+    public static final String AUTH = "auth";
 }

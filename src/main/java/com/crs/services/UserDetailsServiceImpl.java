@@ -1,7 +1,7 @@
 package com.crs.services;
 
 import com.crs.dto.MyUserPrincipal;
-import com.crs.entities.User;
+import com.crs.models.User;
 import com.crs.repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

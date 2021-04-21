@@ -1,7 +1,7 @@
 package com.crs.dto;
 
-import com.crs.entities.Roles;
-import com.crs.entities.User;
+import com.crs.models.Roles;
+import com.crs.models.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
