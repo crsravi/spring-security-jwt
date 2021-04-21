@@ -31,14 +31,13 @@ public class  UserService {
         return userRepository.save(user);
     }
 
-    public List getAllUsers(){
+    public List<User> getAllUsers(){
         return userRepository.findAll();
 
     }
 
     public User findUser(String username) {
-        User user = userRepository.findByUsername(username);
-        return user;
+        return userRepository.findByUsername(username);
     }
 
 }
